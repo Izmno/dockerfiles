@@ -11,3 +11,9 @@ for subdir in $subdirs; do
     docker push docker.izmno.be/dockerfiles/$(basename $subdir):latest
   fi
 done
+
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --push \
+  -t simondemeyere/gh-ost:latest \
+  gh-ost
