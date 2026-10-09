@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Local DB credentials used by gh-ost (never commit)
+client.cnf
+credentials.cnf
