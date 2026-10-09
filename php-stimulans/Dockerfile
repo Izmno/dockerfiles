@@ -6,9 +6,16 @@ FROM php:7.1-apache
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Debian buster is EOL and only served from archive.debian.org. Its Release
+# file is expired and can no longer be authenticated, so mark the repo trusted
+# and skip the Valid-Until check; otherwise apt refuses to install anything.
+RUN echo "deb [trusted=yes] http://archive.debian.org/debian buster main" > /etc/apt/sources.list && \
+	echo "deb [trusted=yes] http://archive.debian.org/debian buster-updates main" >> /etc/apt/sources.list && \
+	echo "deb [trusted=yes] http://archive.debian.org/debian-security buster/updates main" >> /etc/apt/sources.list
+
 # persistent dependencies
 RUN set -eux; \
-	apt-get update; \
+	apt-get -o Acquire::Check-Valid-Until=false update; \
 	apt-get install -y --no-install-recommends \
 # Ghostscript is required for rendering PDF previews
 		ghostscript \
@@ -20,7 +27,7 @@ RUN set -ex; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	\
-	apt-get update; \
+	apt-get -o Acquire::Check-Valid-Until=false update; \
 	apt-get install -y --no-install-recommends \
 		libfreetype6-dev \
 		libicu-dev \
@@ -92,7 +99,7 @@ RUN set -eux; \
 	a2enconf remoteip; 
 
 
-RUN apt-get update && \
+RUN apt-get -o Acquire::Check-Valid-Until=false update && \
     apt-get install -y \
         zlib1g-dev libzip-dev sendmail
 

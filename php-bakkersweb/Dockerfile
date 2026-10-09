@@ -1,9 +1,12 @@
 FROM php:5.6-apache
 
-RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
+# Debian stretch is EOL and only served from archive.debian.org. Its Release
+# file is expired and can no longer be authenticated, so mark the repo trusted
+# and skip the Valid-Until check; otherwise apt refuses to install anything.
+RUN echo "deb [trusted=yes] http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
 
 # Install system dependencies for PHP extensions and other utilities
-RUN apt-get update && apt-get install -y \
+RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y \
     libcurl4-gnutls-dev \
     libxml2-dev \
     libjpeg-dev \
